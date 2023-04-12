@@ -47,11 +47,12 @@ import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.geometry.LatLngQuad;
 import com.mapbox.mapboxsdk.geometry.VisibleRegion;
 import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.location.LocationComponentOptions;
 import com.mapbox.mapboxsdk.location.OnCameraTrackingChangedListener;
 import com.mapbox.mapboxsdk.location.engine.LocationEngine;
 import com.mapbox.mapboxsdk.location.engine.LocationEngineCallback;
-import com.mapbox.mapboxsdk.location.engine.LocationEngineProvider;
+//import com.mapbox.mapboxsdk.location.engine.LocationEngineProvider;
 import com.mapbox.mapboxsdk.location.engine.LocationEngineResult;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
@@ -70,6 +71,7 @@ import com.mapbox.mapboxsdk.style.layers.HeatmapLayer;
 import com.mapbox.mapboxsdk.style.layers.HillshadeLayer;
 import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
+import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.PropertyValue;
 import com.mapbox.mapboxsdk.style.layers.RasterLayer;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
@@ -285,10 +287,15 @@ final class MapboxMapController
   @SuppressWarnings({"MissingPermission"})
   private void enableLocationComponent(@NonNull Style style) {
     if (hasLocationPermission()) {
-      locationEngine = LocationEngineProvider.getBestLocationEngine(context);
+//      locationEngine = LocationEng
+//      ineProvider.getBestLocationEngine(context);
+      LocationComponentActivationOptions.Builder options = LocationComponentActivationOptions.builder(context, style);
+
       locationComponent = mapboxMap.getLocationComponent();
-      locationComponent.activateLocationComponent(
-          context, style, buildLocationComponentOptions(style));
+
+//      locationComponent.activateLocationComponent(
+//              context, style, buildLocationComponentOptions(style));
+      locationComponent.activateLocationComponent(options.build());
       locationComponent.setLocationComponentEnabled(true);
       // locationComponent.setRenderMode(RenderMode.COMPASS); // remove or keep default?
       locationComponent.setLocationEngine(locationEngine);
@@ -853,7 +860,7 @@ final class MapboxMapController
         }
       case "map#invalidateAmbientCache":
         {
-          OfflineManager fileSource = OfflineManager.getInstance(context);
+          OfflineManager fileSource = OfflineManager.Companion.getInstance(context);
 
           fileSource.invalidateAmbientCache(
               new OfflineManager.FileSourceCallback() {
@@ -1315,7 +1322,7 @@ final class MapboxMapController
 
           Layer layer = style.getLayer(layerId);
 
-          layer.setProperties(PropertyFactory.visibility(visible ? "visible" : "none"));
+          layer.setProperties(PropertyFactory.visibility(visible ? Property.VISIBLE : Property.NONE));
 
           result.success(null);
           break;
